@@ -30,8 +30,7 @@ public class ListaProductos {
 
     //Retorna true si la lista no tiene nodos.
     public boolean estaVacia() {
-        //Pendiente: lo implementa la Persona 2.
-        return false;
+        return primero == null;
     }
 
     //Métodos de inserción.
@@ -40,22 +39,61 @@ public class ListaProductos {
     //Inserta un nuevo nodo al inicio de la lista.
     //Retorna false si ya existe un producto con ese nombre.
     public boolean insertarNodoInicio(Producto producto) {
-        //Pendiente: lo implementa la Persona 2.
-        return false;
+        if (buscarNodo(producto.getNombre()) != null) {
+            return false;
+        }
+        Nodo nuevoNodo = new Nodo(producto);
+        nuevoNodo.setSiguiente(primero); //El nuevo nodo apunta al que antes era el primero.
+        primero = nuevoNodo;
+        tamano++;
+        return true;
     }
 
     //Inserta un nuevo nodo al final de la lista.
     //Retorna false si ya existe un producto con ese nombre.
     public boolean insertarNodoFinal(Producto producto) {
-        //Pendiente: lo implementa la Persona 2.
-        return false;
+        if (buscarNodo(producto.getNombre()) != null) {
+            return false;
+        }
+        Nodo nuevoNodo = new Nodo(producto);
+        //Si la lista está vacía, el nuevo nodo pasa a ser el primero.
+        if (primero == null) {
+            primero = nuevoNodo;
+            tamano++;
+            return true;
+        }
+        //Se recorre la lista hasta el último nodo (aquel cuyo siguiente es null).
+        Nodo nodoTemp = primero;
+        while (nodoTemp.getSiguiente() != null) {
+            nodoTemp = nodoTemp.getSiguiente();
+        }
+        nodoTemp.setSiguiente(nuevoNodo);
+        tamano++;
+        return true;
     }
 
     //Inserta un nuevo nodo en la posición indicada (la primera posición es 1).
     //Retorna false si la posición no es válida o si ya existe un producto con ese nombre.
     public boolean insertarNodoEnPosicion(int posicion, Producto producto) {
-        //Pendiente: lo implementa la Persona 2.
-        return false;
+        if (posicion < 1 || posicion > tamano + 1) {
+            return false;
+        }
+        if (posicion == 1) {
+            return insertarNodoInicio(producto);
+        }
+        if (buscarNodo(producto.getNombre()) != null) {
+            return false;
+        }
+        //Se avanza hasta el nodo anterior a la posición donde se va a insertar.
+        Nodo nodoAnterior = primero;
+        for (int i = 1; i < posicion - 1; i++) {
+            nodoAnterior = nodoAnterior.getSiguiente();
+        }
+        Nodo nuevoNodo = new Nodo(producto);
+        nuevoNodo.setSiguiente(nodoAnterior.getSiguiente());
+        nodoAnterior.setSiguiente(nuevoNodo);
+        tamano++;
+        return true;
     }
 
     //Métodos de búsqueda.
@@ -63,14 +101,23 @@ public class ListaProductos {
     //Busca un nodo por el nombre del producto (sin importar mayúsculas).
     //Retorna el nodo encontrado, o null si la lista está vacía o no existe.
     public Nodo buscarNodo(String nombreBuscar) {
-        //Pendiente: lo implementa la Persona 2.
-        return null;
+        Nodo nodoTemp = primero;
+        while (nodoTemp != null && !nodoTemp.getDato().getNombre().equalsIgnoreCase(nombreBuscar)) {
+            nodoTemp = nodoTemp.getSiguiente();
+        }
+        return nodoTemp;
     }
 
     //Retorna el nodo que está en la posición indicada (la primera posición es 1), o null si no existe.
     public Nodo obtenerNodo(int posicion) {
-        //Pendiente: lo implementa la Persona 2.
-        return null;
+        if (posicion < 1 || posicion > tamano) {
+            return null;
+        }
+        Nodo nodoTemp = primero;
+        for (int i = 1; i < posicion; i++) {
+            nodoTemp = nodoTemp.getSiguiente();
+        }
+        return nodoTemp;
     }
 
     //Métodos de modificación.
@@ -128,7 +175,20 @@ public class ListaProductos {
 
     //Recorre la lista completa e imprime la información de cada producto y sus imágenes.
     public void mostrarLista() {
-        //Pendiente: lo implementa la Persona 2.
+        if (primero == null) {
+            System.out.println("La lista se encuentra vacía.");
+            return;
+        }
+        Nodo nodoTemp = primero;
+        int posicion = 1;
+        while (nodoTemp != null) {
+            System.out.println(posicion + ". " + nodoTemp);
+            for (String ruta : nodoTemp.getDato().getListaImagenes()) {
+                System.out.println("      Imagen: " + ruta);
+            }
+            nodoTemp = nodoTemp.getSiguiente();
+            posicion++;
+        }
     }
 
     //Recorre la lista e imprime el costo total de cada producto (precio x cantidad)
