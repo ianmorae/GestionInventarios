@@ -127,22 +127,51 @@ public class ListaProductos {
     //Retorna false si el producto no existe o si el nuevo nombre ya lo usa otro producto.
     public boolean modificarProducto(String nombre, String nuevoNombre, Double nuevoPrecio,
                                      String nuevaCategoria, Integer nuevaCantidad) {
-        //Pendiente: lo implementa la Persona 3.
-        return false;
+        Nodo nodo = buscarNodo(nombre);
+        if (nodo == null) {
+            return false;
+        }
+        Producto producto = nodo.getDato();
+        if (nuevoNombre != null) {
+            //Se valida que el nuevo nombre no esté repetido en otro producto.
+            Nodo repetido = buscarNodo(nuevoNombre);
+            if (repetido != null && repetido != nodo) {
+                return false;
+            }
+            producto.setNombre(nuevoNombre);
+        }
+        if (nuevoPrecio != null) {
+            producto.setPrecio(nuevoPrecio);
+        }
+        if (nuevaCategoria != null) {
+            producto.setCategoria(nuevaCategoria);
+        }
+        if (nuevaCantidad != null) {
+            producto.setCantidad(nuevaCantidad);
+        }
+        return true;
     }
 
     //Cambia la fecha de vencimiento del producto (null indica que no aplica).
     //Retorna false si el producto no existe.
     public boolean modificarFechaVencimiento(String nombre, LocalDate fecha) {
-        //Pendiente: lo implementa la Persona 3.
-        return false;
+        Nodo nodo = buscarNodo(nombre);
+        if (nodo == null) {
+            return false;
+        }
+        nodo.getDato().setFechaVencimiento(fecha);
+        return true;
     }
 
     //Agrega la ruta de una imagen a la lista de imágenes del producto.
     //Retorna false si el producto no existe.
     public boolean agregarImagen(String nombre, String ruta) {
-        //Pendiente: lo implementa la Persona 3.
-        return false;
+        Nodo nodo = buscarNodo(nombre);
+        if (nodo == null) {
+            return false;
+        }
+        nodo.getDato().agregarImagen(ruta);
+        return true;
     }
 
     //Métodos de eliminación.
@@ -150,25 +179,63 @@ public class ListaProductos {
 
     //Elimina el primer nodo de la lista.
     public Nodo eliminarNodoInicio() {
-        //Pendiente: lo implementa la Persona 3.
-        return null;
+        if (primero == null) {
+            return null;
+        }
+        Nodo nodoEliminado = primero;
+        primero = primero.getSiguiente(); //El segundo nodo pasa a ser el primero.
+        nodoEliminado.setSiguiente(null);
+        tamano--;
+        return nodoEliminado;
     }
 
     //Elimina el último nodo de la lista.
     public Nodo eliminarNodoFinal() {
-        //Pendiente: lo implementa la Persona 3.
-        return null;
+        if (primero == null) {
+            return null;
+        }
+        //Si solo hay un nodo, eliminar el último es lo mismo que eliminar el primero.
+        if (primero.getSiguiente() == null) {
+            return eliminarNodoInicio();
+        }
+        //Se busca el penúltimo nodo para dejarlo como el nuevo último.
+        Nodo nodoAnterior = primero;
+        while (nodoAnterior.getSiguiente().getSiguiente() != null) {
+            nodoAnterior = nodoAnterior.getSiguiente();
+        }
+        Nodo nodoEliminado = nodoAnterior.getSiguiente();
+        nodoAnterior.setSiguiente(null);
+        tamano--;
+        return nodoEliminado;
     }
 
     //Elimina el nodo cuyo producto tenga el nombre indicado.
     public Nodo eliminarNodo(String nombreEliminar) {
-        //Pendiente: lo implementa la Persona 3.
-        return null;
+        if (primero == null) {
+            return null;
+        }
+        if (primero.getDato().getNombre().equalsIgnoreCase(nombreEliminar)) {
+            return eliminarNodoInicio();
+        }
+        //Se recorre la lista guardando el nodo anterior, para poder reconectar la secuencia.
+        Nodo nodoAnterior = primero;
+        Nodo nodoActual = primero.getSiguiente();
+        while (nodoActual != null && !nodoActual.getDato().getNombre().equalsIgnoreCase(nombreEliminar)) {
+            nodoAnterior = nodoActual;
+            nodoActual = nodoActual.getSiguiente();
+        }
+        if (nodoActual != null) {
+            nodoAnterior.setSiguiente(nodoActual.getSiguiente());
+            nodoActual.setSiguiente(null);
+            tamano--;
+        }
+        return nodoActual;
     }
 
     //Elimina todos los nodos de la lista.
     public void vaciarLista() {
-        //Pendiente: lo implementa la Persona 3.
+        primero = null;
+        tamano = 0;
     }
 
     //Métodos de recorrido.
@@ -194,12 +261,34 @@ public class ListaProductos {
     //Recorre la lista e imprime el costo total de cada producto (precio x cantidad)
     //y el costo total acumulado de la lista completa.
     public void imprimirReporteCostos() {
-        //Pendiente: lo implementa la Persona 3.
+        if (primero == null) {
+            System.out.println("La lista se encuentra vacía.");
+            return;
+        }
+        System.out.println(String.format("%-28s %14s %8s %16s", "PRODUCTO", "PRECIO UNIT.", "CANT.", "COSTO TOTAL"));
+        System.out.println("-".repeat(70));
+        double acumulado = 0;
+        Nodo nodoTemp = primero;
+        while (nodoTemp != null) {
+            Producto producto = nodoTemp.getDato();
+            double total = producto.getCostoTotal();
+            acumulado += total;
+            System.out.println(String.format("%-28s %14s %8d %16s",
+                    recortar(producto.getNombre(), 28),
+                    String.format("%,.2f", producto.getPrecio()),
+                    producto.getCantidad(),
+                    String.format("%,.2f", total)));
+            nodoTemp = nodoTemp.getSiguiente();
+        }
+        System.out.println("-".repeat(70));
+        System.out.println(String.format("%-51s %18s", "COSTO TOTAL ACUMULADO (CRC):", String.format("%,.2f", acumulado)));
     }
 
     //Recorta un texto largo para que no desordene las columnas del reporte.
     private String recortar(String texto, int maximo) {
-        //Pendiente: lo implementa la Persona 3.
-        return texto;
+        if (texto.length() <= maximo) {
+            return texto;
+        }
+        return texto.substring(0, maximo - 3) + "...";
     }
 }
