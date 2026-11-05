@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class Producto {
 
     //Clase entidad que representa un producto de la tienda de tecnología.
-    //Cada producto se almacena dentro de un Nodo de la ListaProductos.
+    //En el inventario se almacena dentro de un NodoArbol del ArbolProductos,
+    //y en el carrito de cada cliente, dentro de un Nodo de la ListaProductos.
 
     //Formato con el que se leen y muestran las fechas de vencimiento (ej. 31/12/2026).
     public static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
