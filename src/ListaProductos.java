@@ -284,6 +284,17 @@ public class ListaProductos {
         System.out.println(String.format("%-51s %18s", "COSTO TOTAL ACUMULADO (CRC):", String.format("%,.2f", acumulado)));
     }
 
+    //Recorre la lista y retorna el costo total acumulado (suma de precio x cantidad de cada producto).
+    public double calcularCostoTotal() {
+        double acumulado = 0;
+        Nodo nodoTemp = primero;
+        while (nodoTemp != null) {
+            acumulado += nodoTemp.getDato().getCostoTotal();
+            nodoTemp = nodoTemp.getSiguiente();
+        }
+        return acumulado;
+    }
+
     //Recorta un texto largo para que no desordene las columnas del reporte.
     private String recortar(String texto, int maximo) {
         if (texto.length() <= maximo) {
