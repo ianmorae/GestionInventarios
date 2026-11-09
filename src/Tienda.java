@@ -78,7 +78,7 @@ public class Tienda {
 
     // Retorna true si hay clientes esperando.
     public boolean hayClientes() {
-        return !colaClientes.estaVacio();
+        return !colaClientes.estaVacia();
     }
 
     // Saca de la cola al cliente que le toca ser atendido.
